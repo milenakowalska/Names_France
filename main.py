@@ -3,7 +3,7 @@ from Names import find_name
 from tempfile import NamedTemporaryFile
 import os
 
-os.chdir(os.path.dirname(__file__))
+# os.chdir(os.path.dirname(__file__))
 app = Flask(__name__)
 # app._static_folder = os.path.dirname(__file__)
 @app.route('/')
