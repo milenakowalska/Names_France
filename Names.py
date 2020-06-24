@@ -2,8 +2,9 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 import os
+from tempfile import NamedTemporaryFile
 
-df = pd.read_csv(os.path.join(os.path.dirname(__file__),'nat1900-2017.tsv'), sep='\t', index_col='annais')
+df = pd.read_csv(os.path.join(os.path.dirname(__file__),'source/nat1900-2017.tsv'), sep='\t', index_col='annais')
 df = df.drop('XXXX')
 df.index = pd.to_numeric(df.index,errors='coerce')
 
@@ -22,6 +23,13 @@ def find_name(name):
     plt.gcf().autofmt_xdate(rotation = 30)
     plt.xlabel('Years')
     plt.title(f'Popularity of the name "{name}" in France')
-    plt.show()
 
-find_name('Robert')
+    diagram = NamedTemporaryFile(
+        dir = os.path.join(os.path.dirname(__file__),'static'),
+        suffix = '.png', delete=False)
+
+    plt.savefig(diagram)
+    diagram_png = diagram.name.split('/')[-1]
+    diagram.close()
+
+    return diagram_png

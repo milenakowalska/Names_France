@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Names in France</title>
+{% endblock %}
+
+{% block body %}
+<h1>Names in France</h1>
+
+<div>
+<form action='/statistic/' method='POST'>
+    <label class='name_label' for='name' >Put a name:</label>
+    <input type='text' id='name' name='name'>
+
+    <input type='submit' value='Show statistics'>
+</form>
+</div>
+{% endblock %}
