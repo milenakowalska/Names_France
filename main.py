@@ -1,13 +1,14 @@
 from flask import Flask, render_template, url_for, request, redirect
 from Names import find_name
 from tempfile import NamedTemporaryFile
-import os
+import os, glob
 
-# os.chdir(os.path.dirname(__file__))
 app = Flask(__name__)
-# app._static_folder = os.path.dirname(__file__)
 @app.route('/')
 def index():
+    png_files = glob.glob('static/*.png')
+    for png_file in png_files:
+        os.remove(png_file)
     return render_template('index.html')
 
 @app.route('/statistic/', methods=['POST', 'GET'])
@@ -19,6 +20,14 @@ def statistic():
 
     return render_template('statistic.html', diagram=diagram)
 
+
+@app.route('/compare/', methods=['POST', 'GET'])
+def compare():
+    return render_template('compare.html')
+
+@app.route('/general-statistics/', methods=['POST', 'GET'])
+def general_statistics():
+    return render_template('general-statistics.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

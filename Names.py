@@ -4,15 +4,17 @@ import numpy as np
 import os
 from tempfile import NamedTemporaryFile
 
-df = pd.read_csv(os.path.join(os.path.dirname(__file__),'source/nat1900-2017.tsv'), sep='\t', index_col='annais')
+df = pd.read_csv('source/nat1900-2017.tsv', sep='\t')
+df.rename(columns={"sexe":"Gender", "preusuel":"Name","annais":"Years","nombre":"Number of newborns"}, inplace=True)
+df.set_index('Years', inplace=True)
 df = df.drop('XXXX')
 df.index = pd.to_numeric(df.index,errors='coerce')
 
-my_filter = lambda name: df['preusuel'] == name
+my_filter = lambda name: df['Name'] == name
 
 def find_name(name):
     results = df[my_filter(name.upper())]
-    popularity = results['nombre']
+    popularity = results['Number of newborns']
     list_of_values = []
     for key, value in popularity.items():
         for x in range(value):
@@ -29,7 +31,7 @@ def find_name(name):
         suffix = '.png', delete=False)
 
     plt.savefig(diagram)
-    diagram_png = diagram.name.split('/')[-1]
+    diagram_png = os.path.basename(diagram.name)
     diagram.close()
 
     return diagram_png
