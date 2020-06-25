@@ -36,7 +36,16 @@ def find_name(name, year_beginning, year_end):
     diagram_png = os.path.basename(diagram.name)
     diagram.close()
 
-    return diagram_png
+    # customize DataFRame
+    results.Gender = results.Gender.map({1:'male', 2:'female'})
+    results = results.loc[:, ['Gender','Number of newborns']]
+
+    results = results.groupby(pd.cut(results.index, np.arange(int(year_beginning), int(year_end)+10, 10))).sum()
+
+    indexes = [''.join((str(x), '-', str(x+10))) for x in range(int(year_beginning), int(year_end), 10)]
+    results.index = indexes
+
+    return diagram_png, results
 
 def compare_names(name1, name2):
     pass

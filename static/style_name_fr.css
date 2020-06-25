@@ -24,3 +24,20 @@ label, input, select {
     padding: 3px;
 }
 
+.dataframe {
+    border: 0px groove rgb(201, 201, 201);
+    text-align: center;
+}
+
+table, tr{
+    margin: 20px;
+    padding: 20px;
+    border-collapse: collapse; 
+    text-align: center !important;
+}
+th, td {
+    height: 30px;
+    width: 160px;
+}
+
+tr:nth-child(even) {background-color: #d5d5d5;}

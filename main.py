@@ -19,9 +19,9 @@ def statistic():
     year_beginning = str(request.form.get('beginning'))
     year_end = str(request.form.get('end'))
 
-    diagram = find_name(name, year_beginning, year_end)
+    diagram, DataFrame = find_name(name, year_beginning, year_end)
 
-    return render_template('statistic.html', diagram=diagram)
+    return render_template('statistic.html', diagram=diagram, DataFrame = DataFrame.to_html())
 
 
 @app.route('/compare/', methods=['POST', 'GET'])

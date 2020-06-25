@@ -2,6 +2,10 @@
 
 {% block head %}
 <title>Statistic - popularity of the name</title>
+
+<style>
+
+</style>
 {% endblock %}
 
 {% block body %}
@@ -9,6 +13,10 @@
 <div>
 <img src="{{ url_for('static', filename=diagram) }}">
 
+<h3>Table with the content: </h3>
 
+<div class='dataframe'>
+{{ DataFrame | safe }}
+</div>
 </div>
 {% endblock %}
