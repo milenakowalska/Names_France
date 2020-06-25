@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect
-from Names import find_name
+from Names import find_name, compare_names, general_statistics
 from tempfile import NamedTemporaryFile
 import os, glob
 
@@ -15,8 +15,11 @@ def index():
 def statistic():
     import matplotlib
     matplotlib.use('Agg')
-    name = request.form.get('name')
-    diagram = find_name(str(name))
+    name = str(request.form.get('name'))
+    year_beginning = str(request.form.get('beginning'))
+    year_end = str(request.form.get('end'))
+
+    diagram = find_name(name, year_beginning, year_end)
 
     return render_template('statistic.html', diagram=diagram)
 
