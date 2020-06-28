@@ -75,8 +75,8 @@ def compare_names(name1, name2):
     plt.xticks(np.arange(1900, 2030, 10),labels=my_bins)
     plt.gcf().autofmt_xdate(rotation = 30)
     plt.xlabel('Years')
-    plt.legend()
     plt.title(f'Comparision of the names: "{name1}" and "{name2}" in France')
+    plt.legend([f'{name1}', f'{name2}'])
 
     diagram = NamedTemporaryFile(
         dir = os.path.join(os.path.dirname(__file__),'static'),
@@ -85,6 +85,8 @@ def compare_names(name1, name2):
     plt.savefig(diagram)
     diagram_png = os.path.basename(diagram.name)
     diagram.close()
+    plt.clf()
+
 
     # # customize DataFRame
 
