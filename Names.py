@@ -7,14 +7,15 @@ from tempfile import NamedTemporaryFile
 dataframe = pd.read_csv('source/nat1900-2017.tsv', sep='\t')
 dataframe.rename(columns={"sexe":"Gender", "preusuel":"Name","annais":"Years","nombre":"Number of newborns"}, inplace=True)
 dataframe.set_index('Years', inplace=True)
-dataframe = dataframe.drop('XXXX')
+dataframe.drop('XXXX', inplace=True)
+dataframe.Gender = dataframe.Gender.map({1:'male', 2:'female'})
 dataframe.index = pd.to_numeric(dataframe.index,errors='coerce')
 
 def find_name(name, year_beginning, year_end):
     my_filter = lambda name: dataframe.Name == name
     results = dataframe[my_filter(name.upper())]
 
-    filter_years = (dataframe.index >= int(year_beginning)) & (dataframe.index <= int(year_end))
+    filter_years = (results.index >= int(year_beginning)) & (results.index <= int(year_end))
     results = results[filter_years]
    
     popularity = results['Number of newborns']
