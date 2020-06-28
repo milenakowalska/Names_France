@@ -24,6 +24,9 @@ def find_name(name, year_beginning, year_end):
         for x in range(value):
             list_of_values.append(key)
     my_bins = [x for x in range(int(year_beginning), int(year_end)+10, 10)]
+
+    plt.xkcd()
+    plt.style.use('seaborn')
     plt.hist(list_of_values,bins=my_bins, edgecolor='#595959', color='#ff7b64')
     plt.xticks(np.arange(int(year_beginning), int(year_end)+10, 10),labels=my_bins)
     plt.gcf().autofmt_xdate(rotation = 30)
@@ -71,6 +74,8 @@ def compare_names(name1, name2):
 
     my_bins = [x for x in range(1900, 2030, 10)]
     width = 10
+    plt.xkcd()
+    plt.style.use('seaborn')
     plt.hist(values_first_name,bins=my_bins, alpha=0.5, width=width, edgecolor='#595959', color='#ff7b64', label=f'{name1}', log=True)
     plt.hist(values_second_name,bins=my_bins, alpha=0.5, width=width, edgecolor='#595959', color='#6985a0', label=f'{name2}', log=True)
     plt.xticks(np.arange(1900, 2030, 10),labels=my_bins)

@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, request, redirect
 from Names import find_name, compare_names, general_statistics
 from tempfile import NamedTemporaryFile
 import os, glob
+import pandas as pd
 
 app = Flask(__name__)
 @app.route('/')
@@ -37,7 +38,11 @@ def compare():
 
 @app.route('/general-statistics/', methods=['POST', 'GET'])
 def general_statistics():
-    return render_template('general-statistics.html')
+    most_popular_df=pd.read_csv('static/most_popular_.csv')
+    most_popular_df.index += 1
+    return render_template('general-statistics.html', 
+                            most_popular_df=most_popular_df.to_html(),
+                                )
 
 if __name__ == '__main__':
     app.run(debug=True)
