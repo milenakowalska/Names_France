@@ -26,7 +26,14 @@ def statistic():
 
 @app.route('/compare/', methods=['POST', 'GET'])
 def compare():
-    return render_template('compare.html')
+    import matplotlib
+    matplotlib.use('Agg')
+    name1 = str(request.form.get('name_first'))
+    name2 = str(request.form.get('name_second'))
+
+    compare_names_diagram, compare_DataFrame = compare_names(name1, name2)
+
+    return render_template('compare.html', compare_names_diagram=compare_names_diagram, compare_DataFrame = compare_DataFrame.to_html(), n1 = name1, n2=name2)
 
 @app.route('/general-statistics/', methods=['POST', 'GET'])
 def general_statistics():

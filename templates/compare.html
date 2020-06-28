@@ -6,5 +6,13 @@
 
 {% block body %}
 
+<div>
+    <h1>Compare names {{ n1 }} and {{ n2 }}</h1>
+    <img src="{{ url_for('static', filename=compare_names_diagram) }}">
+    
+    <h3>Table with the content: </h3>
+    
+    {{ compare_DataFrame | safe }}
+    </div>
 
 {% endblock %}
