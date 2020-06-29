@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect
 from Names import find_name, compare_names, general_statistics
 from tempfile import NamedTemporaryFile
-import os, glob
+import os, glob, time
 import pandas as pd
 
 app = Flask(__name__)
@@ -9,7 +9,9 @@ app = Flask(__name__)
 def index():
     png_files = glob.glob('static/*.png')
     for png_file in png_files:
-        os.remove(png_file)
+        minutes_30 = time.time() - 30 * 60
+        if os.path.getatime(png_file) < minutes_30:
+                os.remove(png_file)
     return render_template('index.html')
 
 @app.route('/statistic/', methods=['POST', 'GET'])

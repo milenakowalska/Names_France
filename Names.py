@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
-import os
+import os, glob
 from tempfile import NamedTemporaryFile
 
 dataframe = pd.read_csv('source/nat1900-2017.tsv', sep='\t')
@@ -12,34 +12,40 @@ dataframe.Gender = dataframe.Gender.map({1:'male', 2:'female'})
 dataframe.index = pd.to_numeric(dataframe.index,errors='coerce')
 
 def find_name(name, year_beginning, year_end):
+    diagram_png = None
+    statistics = os.path.join(os.path.dirname(__file__), 'static')
+
     my_filter = lambda name: dataframe.Name == name
     results = dataframe[my_filter(name.upper())]
 
     filter_years = (results.index >= int(year_beginning)) & (results.index <= int(year_end))
     results = results[filter_years]
-   
-    popularity = results['Number of newborns']
-    list_of_values = []
-    for key, value in popularity.items():
-        for x in range(value):
-            list_of_values.append(key)
-    my_bins = [x for x in range(int(year_beginning), int(year_end)+10, 10)]
 
-    plt.xkcd()
-    plt.style.use('seaborn')
-    plt.hist(list_of_values,bins=my_bins, edgecolor='#595959', color='#ff7b64')
-    plt.xticks(np.arange(int(year_beginning), int(year_end)+10, 10),labels=my_bins)
-    plt.gcf().autofmt_xdate(rotation = 30)
-    plt.xlabel('Years')
-    plt.title(f'Popularity of the name "{name}" in France')
+    for statistic in glob.glob(f'{statistics}/*.png'):
+        if statistic == f'{statistics}/{name}_{year_beginning}_{year_end}.png':
+            diagram_png = f'{name}_{year_beginning}_{year_end}.png'
+    
+    if diagram_png == None:
+    
+        popularity = results['Number of newborns']
+        list_of_values = []
+        for key, value in popularity.items():
+            for x in range(value):
+                list_of_values.append(key)
+        my_bins = [x for x in range(int(year_beginning), int(year_end)+10, 10)]
 
-    diagram = NamedTemporaryFile(
-        dir = os.path.join(os.path.dirname(__file__),'static'),
-        suffix = '.png', delete=False)
+        plt.xkcd()
+        plt.style.use('seaborn')
+        plt.hist(list_of_values,bins=my_bins, edgecolor='#595959', color='#ff7b64')
+        plt.xticks(np.arange(int(year_beginning), int(year_end)+10, 10),labels=my_bins)
+        plt.gcf().autofmt_xdate(rotation = 30)
+        plt.xlabel('Years')
+        plt.title(f'Popularity of the name "{name}" in France')
 
-    plt.savefig(diagram)
-    diagram_png = os.path.basename(diagram.name)
-    diagram.close()
+        
+        plt.savefig(f'{statistics}/{name}_{year_beginning}_{year_end}.png')
+        diagram_png = f'{name}_{year_beginning}_{year_end}.png'
+    
 
     # customize DataFRame
     results.Gender = results.Gender.map({1:'male', 2:'female'})
@@ -53,45 +59,48 @@ def find_name(name, year_beginning, year_end):
     return diagram_png, results
 
 def compare_names(name1, name2):
-    my_filter = lambda name: dataframe.Name == name
+    diagram_png = None
+    statistics = os.path.join(os.path.dirname(__file__), 'static')
 
-    name_first = dataframe[my_filter(name1.upper())]
-    name_second = dataframe[my_filter(name2.upper())]
+    for statistic in glob.glob(f'{statistics}/*.png'):
+        if statistic == f'{statistics}/compare_{name1}_{name2}.png':
+            diagram_png = f'compare_{name1}_{name2}.png'
 
-    values_first_name = []
-    values_second_name = []
+    if not diagram_png:
+        my_filter = lambda name: dataframe.Name == name
 
-    results_first = name_first['Number of newborns']
-    results_second = name_second['Number of newborns']
+        name_first = dataframe[my_filter(name1.upper())]
+        name_second = dataframe[my_filter(name2.upper())]
 
-    for key, value in results_first.items():
-        for x in range(value):
-            values_first_name.append(key)
+        values_first_name = []
+        values_second_name = []
 
-    for key, value in results_second.items():
-        for x in range(value):
-            values_second_name.append(key)
+        results_first = name_first['Number of newborns']
+        results_second = name_second['Number of newborns']
 
-    my_bins = [x for x in range(1900, 2030, 10)]
-    width = 10
-    plt.xkcd()
-    plt.style.use('seaborn')
-    plt.hist(values_first_name,bins=my_bins, alpha=0.5, width=width, edgecolor='#595959', color='#ff7b64', label=f'{name1}', log=True)
-    plt.hist(values_second_name,bins=my_bins, alpha=0.5, width=width, edgecolor='#595959', color='#6985a0', label=f'{name2}', log=True)
-    plt.xticks(np.arange(1900, 2030, 10),labels=my_bins)
-    plt.gcf().autofmt_xdate(rotation = 30)
-    plt.xlabel('Years')
-    plt.title(f'Comparision of the names: "{name1}" and "{name2}" in France')
-    plt.legend([f'{name1}', f'{name2}'])
+        for key, value in results_first.items():
+            for x in range(value):
+                values_first_name.append(key)
 
-    diagram = NamedTemporaryFile(
-        dir = os.path.join(os.path.dirname(__file__),'static'),
-        suffix = '.png', delete=False)
+        for key, value in results_second.items():
+            for x in range(value):
+                values_second_name.append(key)
 
-    plt.savefig(diagram)
-    diagram_png = os.path.basename(diagram.name)
-    diagram.close()
-    plt.clf()
+        my_bins = [x for x in range(1900, 2030, 10)]
+        width = 10
+        plt.xkcd()
+        plt.style.use('seaborn')
+        plt.hist(values_first_name,bins=my_bins, alpha=0.5, width=width, edgecolor='#595959', color='#ff7b64', label=f'{name1}', log=True)
+        plt.hist(values_second_name,bins=my_bins, alpha=0.5, width=width, edgecolor='#595959', color='#6985a0', label=f'{name2}', log=True)
+        plt.xticks(np.arange(1900, 2030, 10),labels=my_bins)
+        plt.gcf().autofmt_xdate(rotation = 30)
+        plt.xlabel('Years')
+        plt.title(f'Comparision of the names: "{name1}" and "{name2}" in France')
+        plt.legend([f'{name1}', f'{name2}'])
+
+        plt.savefig(f'{statistics}/compare_{name1}_{name2}.png')
+        diagram_png = f'compare_{name1}_{name2}.png'
+        plt.clf()
 
 
     # # customize DataFRame
