@@ -42,8 +42,15 @@ def compare():
 def general_statistics():
     most_popular_df=pd.read_csv('static/most_popular_.csv')
     most_popular_df.index += 1
+
+    df_female=pd.read_csv('static/most_popular_female.csv')
+    df_female.index +=1
+    df_male=pd.read_csv('static/most_popular_male.csv')
+    df_male.index += 1
     return render_template('general-statistics.html', 
                             most_popular_df=most_popular_df.to_html(),
+                            df_female = df_female.to_html(),
+                            df_male = df_male.to_html(),
                                 )
 
 if __name__ == '__main__':
