@@ -1,4 +1,4 @@
-# Dictionary Project
+# Names in France
 
 ## General info
 This app allows you to check the popularity of the default name in France in years 1900-2017. \
