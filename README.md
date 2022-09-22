@@ -1,8 +1,8 @@
 # Names in France
 
 ## General info
-This app allows you to check the popularity of the default name in France in years 1900-2017. \
-You can also compare the popularity of two default names. \
+This app allows you to check the popularity of the chosen name in France in years 1900-2017. \
+You can also compare the popularity of two names. \
 The last section allows you to see the collection with general statistics regarding names in France. \
  \
 Data source: https://www.data.gouv.fr/en/datasets/ficher-des-prenoms-de-1900-a-2018/
