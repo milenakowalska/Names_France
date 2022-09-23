@@ -1,12 +1,15 @@
-from flask import Flask, render_template, url_for, request, redirect
-from Names import find_name, compare_names, general_statistics
-from tempfile import NamedTemporaryFile
+from flask import Flask, render_template, request
+import matplotlib
 import os, glob, time
 import pandas as pd
+
+from Names import find_name, compare_names
 
 app = Flask(__name__)
 @app.route('/')
 def index():
+    # in order to keep static directory clean,
+    # remove all diagrams older than 30 minutes
     png_files = glob.glob('static/*.png')
     for png_file in png_files:
         minutes_30 = time.time() - 30 * 60
@@ -14,9 +17,8 @@ def index():
                 os.remove(png_file)
     return render_template('index.html')
 
-@app.route('/statistic/', methods=['POST', 'GET'])
+@app.route('/statistic/', methods=['POST'])
 def statistic():
-    import matplotlib
     matplotlib.use('Agg')
     name = str(request.form.get('name'))
     year_beginning = str(request.form.get('beginning'))
@@ -27,9 +29,8 @@ def statistic():
     return render_template('statistic.html', diagram=diagram, DataFrame = DataFrame.to_html())
 
 
-@app.route('/compare/', methods=['POST', 'GET'])
+@app.route('/compare/', methods=['POST'])
 def compare():
-    import matplotlib
     matplotlib.use('Agg')
     name1 = str(request.form.get('name_first'))
     name2 = str(request.form.get('name_second'))
@@ -38,7 +39,7 @@ def compare():
 
     return render_template('compare.html', compare_names_diagram=compare_names_diagram, compare_DataFrame = compare_DataFrame.to_html(), n1 = name1, n2=name2)
 
-@app.route('/general-statistics/', methods=['POST', 'GET'])
+@app.route('/general-statistics/', methods=['GET'])
 def general_statistics():
     most_popular_df=pd.read_csv('static/most_popular_.csv')
     most_popular_df.index += 1
@@ -50,8 +51,8 @@ def general_statistics():
     return render_template('general-statistics.html', 
                             most_popular_df=most_popular_df.to_html(),
                             df_female = df_female.to_html(),
-                            df_male = df_male.to_html(),
-                                )
+                            df_male = df_male.to_html()
+                            )
 
 if __name__ == '__main__':
     app.run(debug=True)

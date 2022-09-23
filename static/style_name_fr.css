@@ -14,7 +14,7 @@ h1 {
 
 div {
     margin: auto;
-    width: 50%;
+    width: 70%;
     border: 3px solid grey;
     padding: 20px 10px 0px 40px;
 }
@@ -41,3 +41,33 @@ th, td {
 }
 
 tr:nth-child(even) {background-color: #d5d5d5;}
+
+.stats_section {
+    width: 90%;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+    max-height: 1200px;
+}
+
+@media (min-width: 900px) {
+    .stats_section {
+        grid-template-columns: repeat(2, 1fr);
+        max-height: 600px;
+    }
+  }
+
+.table, .graph {
+    width: 90%;
+    height: auto;
+    max-height: 450px;
+    overflow-y: scroll;
+    float:right;
+    margin: auto;
+    padding: 20px; 
+    border: 0px solid white
+}
+
+.single_diagram {
+    width: 100%
+}

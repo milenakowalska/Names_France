@@ -2,21 +2,31 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
 import os, glob
-from tempfile import NamedTemporaryFile
 
-dataframe = pd.read_csv('source/nat1900-2017.tsv', sep='\t')
-dataframe.rename(columns={"sexe":"Gender", "preusuel":"Name","annais":"Years","nombre":"Number of newborns"}, inplace=True)
-dataframe.set_index('Years', inplace=True)
-dataframe.drop('XXXX', inplace=True)
-dataframe.Gender = dataframe.Gender.map({1:'male', 2:'female'})
-dataframe.index = pd.to_numeric(dataframe.index,errors='coerce')
+def get_dataframe():
+    dataframe = pd.read_csv('source/nat1900-2017.tsv', sep='\t')
+    dataframe.rename(columns={"sexe":"Gender", "preusuel":"Name","annais":"Years","nombre":"Number of newborns"}, inplace=True)
+    dataframe.set_index('Years', inplace=True)
+    dataframe.drop('XXXX', inplace=True)
+    dataframe.Gender = dataframe.Gender.map({1:'male', 2:'female'})
+    dataframe.index = pd.to_numeric(dataframe.index,errors='coerce')
+    return dataframe
 
 def find_name(name, year_beginning, year_end):
+    """
+    Check if a diagram with the given name and time range already exists.
+    If not, create one and save in static directory.
+
+    Returns a tuple that consists of:
+    - path to the graph
+    - pandas Series data set
+    """
+    dataframe = get_dataframe()
     diagram_png = None
     statistics = os.path.join(os.path.dirname(__file__), 'static')
 
-    my_filter = lambda name: dataframe.Name == name
-    results = dataframe[my_filter(name.upper())]
+    name_filter = lambda name: dataframe.Name == name
+    results = dataframe[name_filter(name.upper())]
 
     filter_years = (results.index >= int(year_beginning)) & (results.index <= int(year_end))
     results = results[filter_years]
@@ -25,8 +35,8 @@ def find_name(name, year_beginning, year_end):
         if statistic == f'{statistics}/{name}_{year_beginning}_{year_end}.png':
             diagram_png = f'{name}_{year_beginning}_{year_end}.png'
     
+    # if no diagram found, create a new one
     if diagram_png == None:
-    
         popularity = results['Number of newborns']
         list_of_values = []
         for key, value in popularity.items():
@@ -47,7 +57,7 @@ def find_name(name, year_beginning, year_end):
         diagram_png = f'{name}_{year_beginning}_{year_end}.png'
     
 
-    # customize DataFRame
+    # customize DataFrame
     results.Gender = results.Gender.map({1:'male', 2:'female'})
     results = results.loc[:, ['Gender','Number of newborns']]
 
@@ -59,6 +69,16 @@ def find_name(name, year_beginning, year_end):
     return diagram_png, results
 
 def compare_names(name1, name2):
+    """
+    Check if a diagram that shows comparision of two given names already exists.
+    If not, create one and save in static directory.
+
+    Returns a tuple that consists of:
+    - path to the graph
+    - pandas Series data set
+    """
+
+    dataframe = get_dataframe()
     diagram_png = None
     statistics = os.path.join(os.path.dirname(__file__), 'static')
 
@@ -66,11 +86,12 @@ def compare_names(name1, name2):
         if statistic == f'{statistics}/compare_{name1}_{name2}.png':
             diagram_png = f'compare_{name1}_{name2}.png'
 
-    if not diagram_png:
-        my_filter = lambda name: dataframe.Name == name
+    my_filter = lambda name: dataframe.Name == name
+    name_first = dataframe[my_filter(name1.upper())]
+    name_second = dataframe[my_filter(name2.upper())]
 
-        name_first = dataframe[my_filter(name1.upper())]
-        name_second = dataframe[my_filter(name2.upper())]
+    # if no diagram found, create a new one
+    if not diagram_png:
 
         values_first_name = []
         values_second_name = []
@@ -79,11 +100,11 @@ def compare_names(name1, name2):
         results_second = name_second['Number of newborns']
 
         for key, value in results_first.items():
-            for x in range(value):
+            for _ in range(value):
                 values_first_name.append(key)
 
         for key, value in results_second.items():
-            for x in range(value):
+            for _ in range(value):
                 values_second_name.append(key)
 
         my_bins = [x for x in range(1900, 2030, 10)]
@@ -103,8 +124,7 @@ def compare_names(name1, name2):
         plt.clf()
 
 
-    # # customize DataFRame
-
+    # customize DataFrame
     result_first = name_first['Number of newborns'].groupby(pd.cut(name_first.index, np.arange(1900,2030, 10))).sum()
     indexes = [''.join((str(x), '-', str(x+10))) for x in range(1900,2020, 10)]
     result_first.index = indexes
@@ -118,6 +138,3 @@ def compare_names(name1, name2):
     results = pd.concat([result_first, result_second], axis=1)
 
     return diagram_png, results
-
-def general_statistics():
-    pass
